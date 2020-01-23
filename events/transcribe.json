@@ -1,0 +1,38 @@
+{
+    "Records": [
+        {
+            "eventVersion": "2.1",
+            "eventTime": "2020-01-23T05:42:08.447Z",
+            "requestParameters": {
+                "sourceIPAddress": "24.61.41.6"
+            },
+            "s3": {
+                "configurationId": "d2be6608-f70a-4036-9ff8-531771c88bd2",
+                "object": {
+                    "eTag": "37da91309682726c5a45becd5bba9dfb",
+                    "sequencer": "005E2932366F3C60AA",
+                    "key": "transcoded/ted.mp3",
+                    "size": 9872728
+                },
+                "bucket": {
+                    "arn": "arn:aws:s3:::rhunter-audio",
+                    "name": "rhunter-audio",
+                    "ownerIdentity": {
+                        "principalId": "A331CH1Y5B33YB"
+                    }
+                },
+                "s3SchemaVersion": "1.0"
+            },
+            "responseElements": {
+                "x-amz-id-2": "/s4fgRrZI8WYtatQ1Z1cAt30g6421ReQWSY32vKhElPSPdsY0mOJkQanjGj3EOj3x4eg4pfjQyC0B2bd4OQvQ4kaem3NaaDV",
+                "x-amz-request-id": "C30CE45B9D822270"
+            },
+            "awsRegion": "us-east-1",
+            "eventName": "ObjectCreated:Put",
+            "userIdentity": {
+                "principalId": "AWS:AIDAIF5TNL75XG5PHKLTM"
+            },
+            "eventSource": "aws:s3"
+        }
+    ]
+}

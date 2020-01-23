@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "evernote-audio"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1ritp3jupsf0i"
+s3_prefix = "evernote-audio"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "BucketName=\"rhunter-audio\""

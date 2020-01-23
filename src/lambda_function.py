@@ -4,8 +4,10 @@ import os
 import shutil
 import stat
 import subprocess
+import json
 
-client = boto3.client('s3')
+s3_client = boto3.client('s3')
+trans_client = boto3.client('transcribe')
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
@@ -28,14 +30,32 @@ if is_lambda_runtime():
 
 
 def lambda_handler(event, context):
+    print(json.dumps(event))
     for r in event['Records']:
         s3 = r['s3']
         bucket = s3['bucket']['name']
         key = s3['object']['key']
+        ff = os.path.split(key)
+        split = os.path.split(key)
+        if split[0] == 'raw':
+            source = download_audio(bucket, key)
+            output = os.path.splitext(source)[0] + '.mp3'
+            transcode_audio(source, output)
+            output_key = os.path.join('transcoded', split[1])
+            output_key = os.path.splitext(output_key)[0] + '.mp3'
+            s3_client.upload_file(output, bucket, output_key)
+        elif split[0] == 'transcoded':
 
-        source = download_audio(bucket, key)
-        output = os.path.splitext(source)[0] + '.mp3'
-        transcode_audio(source, output)
+            response = trans_client.start_transcription_job(
+                TranscriptionJobName=split[1],
+                LanguageCode='en-US',
+                Media={
+                    'MediaFileUri': 's3://rhunter-audio/{}'.format(key)
+                }
+            )
+            ## execute transcription
+            pass
+
 
     logger.info("{0} records processed.".format(len(event['Records'])))
     return True
@@ -47,7 +67,7 @@ def download_audio(bucket, key):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    client.download_file(bucket, key, local_source_audio)
+    s3_client.download_file(bucket, key, local_source_audio)
     output = subprocess.check_output(["file", local_source_audio])
     logger.debug("Audio file downloaded to {}".format(str(output, "utf-8")))
     return local_source_audio
@@ -60,7 +80,5 @@ def transcode_audio(local_source_audio, output_file):
     logger.debug(str(subprocess.check_output(["file", output_file]), "utf-8"))
 
 
-def upload_mp3(bucket, mp3_file):
-    key = mp3_file[5:]
-    logger.debug('uploading to S3 bucket: {}, key: {}'.format(bucket, key))
-    client.upload(bucket, key)
+def upload_mp3(bucket, output):
+    logger.debug('uploading to S3 bucket: {}, key: {}'.format(bucket, output))
